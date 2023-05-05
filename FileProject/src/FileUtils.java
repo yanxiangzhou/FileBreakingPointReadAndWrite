@@ -16,7 +16,7 @@ public class FileUtils {
     private static final int BUFFER_SIZE = 1024;
 
     public static String getFileMd5(File file) {
-        if (!file.isFile()) {
+        if (file == null || !file.isFile()) {
             return null;
         }
         MessageDigest digest;
