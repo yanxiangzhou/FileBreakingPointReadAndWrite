@@ -19,8 +19,8 @@ public class FileUtils {
         if (!file.isFile()) {
             return null;
         }
-        MessageDigest digest = null;
-        FileInputStream in = null;
+        MessageDigest digest;
+        FileInputStream in;
         byte[] buffer = new byte[BUFFER_SIZE];
         int len;
         try {
