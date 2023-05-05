@@ -1,4 +1,6 @@
 import java.io.*;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public class Main {
 
@@ -18,18 +20,22 @@ public class Main {
         if (targetFile2.exists()) {
             System.out.println(targetFilePath2 + " has exist");
         }
-        fileOutputStreamWriteTest(inputStream1, targetFile1);
-        randomAccessFileWriteTest(inputStream2, targetFile2);
+        fileOutputStreamWriteTest(inputStream1, targetFile1, file);
+        randomAccessFileWriteTest(inputStream2, targetFile2, file);
         System.out.println(file.length());
         System.out.println(targetFile1 + " path is " + targetFile1.getAbsolutePath() + " file size is " + targetFile1.length());
         System.out.println(targetFile2 + " path is " + targetFile2.getAbsolutePath() + " file size is " + targetFile2.length());
     }
 
 
-    public static void fileOutputStreamWriteTest(BufferedInputStream inputStream, File targetFile) {
+    public static void fileOutputStreamWriteTest(BufferedInputStream inputStream, File targetFile, File inputFile) {
         long startTime = System.currentTimeMillis();
         try (FileOutputStream fos = new FileOutputStream(targetFile, true)) {
             if (targetFile.exists() && !targetFile.isDirectory() && targetFile.length() > 0) {
+                if (FileUtils.getFileMd5(targetFile).equals(FileUtils.getFileMd5(inputFile))) {
+                    System.out.println(" file has exist and it is completed");
+                    return;
+                }
                 inputStream.skip(targetFile.length());
             }
             byte[] buffer = new byte[8 * 1024];
@@ -46,10 +52,14 @@ public class Main {
         System.out.println("fileOutputStreamWriteTest method cost " + (endTime - startTime) + " ms " + targetFile + "  size is " + targetFile.length());
     }
 
-    public static void randomAccessFileWriteTest(BufferedInputStream inputStream, File targetFile) {
+    public static void randomAccessFileWriteTest(BufferedInputStream inputStream, File targetFile, File inputFile) {
         long startTime = System.currentTimeMillis();
         try (RandomAccessFile saveFile = new RandomAccessFile(targetFile, "rw")) {
             if (targetFile.exists() && !targetFile.isDirectory() && targetFile.length() > 0) {
+                if (FileUtils.getFileMd5(targetFile).equals(FileUtils.getFileMd5(inputFile))) {
+                    System.out.println(" file has exist and it is completed");
+                    return;
+                }
                 saveFile.seek(targetFile.length());
                 inputStream.skip(targetFile.length());
             }
